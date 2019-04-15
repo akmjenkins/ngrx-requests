@@ -5,7 +5,7 @@
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
-    "module": "es2015",
+    "module":"es2015",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -17,6 +17,17 @@
     "lib": [
       "es2018",
       "dom"
-    ]
-  }
+    ],
+    "paths": {
+      "ngrx-requests": [
+        "dist/ngrx-requests"
+      ],
+      "ngrx-requests/*": [
+        "dist/ngrx-requests/*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules/*"
+  ]
 }

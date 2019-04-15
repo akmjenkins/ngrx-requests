@@ -1,0 +1,14 @@
+Type the name of a country:<br>
+<input type="text" [formControl]="control">
+
+<br>
+<br>
+
+<div>
+  Request Status: {{req.status$ | async}}
+</div>
+
+Response:
+<pre>
+  {{stringify(req.meta$ | async)}}
+</pre>
