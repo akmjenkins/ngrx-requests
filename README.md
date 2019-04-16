@@ -1,7 +1,6 @@
 [![NPM Version](https://img.shields.io/npm/v/ngrx-requests.svg?branch=master)](https://www.npmjs.com/package/ngrx-requests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![dependencies Status](https://david-dm.org/akmjenkins/ngrx-requests/dist/ngrx-requests/status.svg)](https://david-dm.org/akmjenkins/ngrx-requests)
-[![install size](https://packagephobia.now.sh/badge?p=ngrx-requests/dist/ngrx-requests&ngrx-requestsCB=1)](https://packagephobia.now.sh/result?p=ngrx-requests)
+[![install size](https://packagephobia.now.sh/badge?p=ngrx-requests/dist/ngrx-requests&ngrx-requestsCB=2)](https://packagephobia.now.sh/result?p=ngrx-requests)
 [![codecov](https://codecov.io/gh/akmjenkins/ngrx-requests/branch/master/graph/badge.svg)](https://codecov.io/gh/akmjenkins/ngrx-requests)
 [![Build Status](https://travis-ci.org/akmjenkins/ngrx-requests.svg?branch=master)](https://travis-ci.org/akmjenkins/ngrx-requests)
 
