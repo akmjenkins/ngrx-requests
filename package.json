@@ -9,7 +9,7 @@
     "build:lib": "ng build ngrx-requests",
     "test:lib": "ng test ngrx-requests",
     "pack:lib": "cd dist/ngrx-requests && npm pack",
-    "package": "npm run build:lib && npm run copy:files && npm run pack:lib",
+    "package": "npm run test:lib && npm run build:lib && npm run copy:files && npm run pack:lib",
     "copy:license": "cp LICENSE ./dist/ngrx-requests",
     "copy:readme": "cp README.md ./dist/ngrx-requests",
     "copy:files": "npm run copy:license && npm run copy:readme"
