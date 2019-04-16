@@ -1,6 +1,6 @@
 [![NPM Version](https://img.shields.io/npm/v/ngrx-requests.svg?branch=master)](https://www.npmjs.com/package/ngrx-requests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![install size](https://packagephobia.now.sh/badge?p=ngrx-requests/dist/ngrx-requests&ngrx-requestsCB=2)](https://packagephobia.now.sh/result?p=ngrx-requests)
+[![install size](https://packagephobia.now.sh/badge?p=ngrx-requests/dist/ngrx-requests&ngrx-requestsCB=10)](https://packagephobia.now.sh/result?p=ngrx-requests)
 [![codecov](https://codecov.io/gh/akmjenkins/ngrx-requests/branch/master/graph/badge.svg)](https://codecov.io/gh/akmjenkins/ngrx-requests)
 [![Build Status](https://travis-ci.org/akmjenkins/ngrx-requests.svg?branch=master)](https://travis-ci.org/akmjenkins/ngrx-requests)
 
@@ -99,7 +99,7 @@ export class MyService implements OnDestroy {
       status$: this.status$,
       meta$: this.meta$,
       dispose: this.dispose
-    } = this.requests.register({matcher: matchWithUrl(MyService.PATH)}));
+    } = this.requests.register(matchWithUrl(MyService.PATH)));
   }
 
   makeRequest(v: string) {
@@ -146,7 +146,7 @@ Template:
 </pre>
 ```
 
-### (slightly more) Advanced:
+#### (slightly more) Advanced:
 
 You might not feel comfortable (I wouldn't blame you) to leave all of your data inside your `NGRX_REQUESTS` slice of state in your store. Use an effect and it now becomes trivial to put your network-retrieved data wherever you want:
 
@@ -168,7 +168,7 @@ export class MyService {
 }
 ```
 
-Have your effect listen for NGRX_REQUEST.SUCCESS:
+Have your effect listen for `NgrxRequestAction.SUCCESS`:
 
 ```js
 export class MyEffect {
@@ -218,13 +218,14 @@ export class MyService implments OnDestroy {
 }
 ```
 
-### API
+API
+--
 
 `ngrx-requests` is built with extreme simplicity, and thus flexibility, in mind. Here's what you need to know:
 
 ### ngrxRequestsService
 
-#### `register(matcher: {matcher: Matcher, transform?: Transformer}): RequestData`
+#### `register(matcher: Matcher, transform?: Transformer): RequestData`
 
 `matcher` - a function that accepts an HttpRequest and returns a boolean
 `transform` - optional - a function that can transform the success or error response from the async request.
@@ -268,88 +269,149 @@ The rest of the Observables are simply selectors to the `NGRX_REQUESTS` slice of
 
 ### Matchers
 
-ngrx-requests helps you out by providing you `HttpRequest` matchers to help get you started:
+`ngrx-requests` helps you out by providing you `HttpRequest` matchers to help get you started:
 
-`matchWithBody<T>(body:T)` - matches any request where the body of the request matches the provided body with equality i.e. `===`.
-
-e.g. `ngrxRequestsService.register({matcher:matchWithBody<string>('mybody')})`
-
-`matchWithBodyMatcher<T>(fn: (body: T) => boolean))` - matches any request where the provided function that accepts the HttpRequest body returns true.
-
-e.g. `ngrxRequestsService.register({matcher:matchWithBodyMatcher((body: any) => body.params.key === 'value')));` - matches any request whose body has a `params` key whose value contains `{key:'value'}`
-
-`matchWithHeader(name: string, val?: string)` - matches any request where a header exists with the provided name and, if the optional `val` is provided, the header matches it.
-
-e.g. `ngrxRequestsService.register({matcher:matchWithHeader('Authorization')});` - matches any request with an `Authorization` header
-
-e.g. `ngrxRequestsService.register({matcher:matchWithHeader('Authorization','Bearer 12345')});` - matches any request with an `Authorization` header whose value is `Bearer 12345`
-
-`matchWithMethod(method: string)` - matches any request where the method matches the provided method (case insensitive)
-
-e.g. `ngrxRequestsService.register({matcher:matchWithMethod('post'))` - matches any post request
-
-`matchWithUrl(url: string | RegExp)` - matches any request whose `url` matches the provided string or regular expression
-
-e.g. These:
+- ##### `matchWithBody<T>(body:T)`
+matches any request where the body of the request matches the provided body with equality i.e. `===`.
 
 ```js
+// this
+matchWithBody<string>('mybody')
+// will match
+http.post('/some-endpoint','mybody');
+```
+ 
+-  ##### `matchWithBodyMatcher<T>(fn: (body: T) => boolean))` 
+matches any request where the provided function that accepts the HttpRequest body returns true.
+
+```js
+// this 
+ matchWithBodyMatcher((body: any) => body.params.key === 'value')));`
+// will match
+http.post('/some-endpoint',{params:{key:'value'}});
+```
+ 
+
+-  ##### `matchWithHeader(name: string, val?: string)`
+matches any request where a header exists with the provided name and, if the optional `val` is provided, the header matches it.
+
+```js
+// this
+matchWithHeader('Authorization')});
+// will match
+http.get('/some-endpoint',{headers:{Authorization:'anything'}});
+
+// and this
+matchWithHeader('Authorization','Bearer 12345')})
+// will match
+http.post('/some-endpoint','data',{headers:{Authorization:'Bearer 12345'}});
+```
+
+-  ##### `matchWithMethod(method: string)`
+matches any request where the method matches the provided method (case insensitive)
+```js
+// this
+matchWithMethod('post')
+// will match
+http.post('/some-endpoint');
+```
+
+-  ##### `matchWithUrl(url: string | RegExp)`
+matches any request whose `url` matches the provided string or regular expression
+
+```js
+// these 
 matchWithUrl('someurl'));
 matchWithUrl(/som[aeiou]url/)
+
+// will match
+httpService.get('/someurl');
+// but not
 ```
 
-match this:
+-  ##### `matchWithParam(name: string, val?: string)`
+matches any request where a param exists with the provided name and, if the optional `val` is provided, the param matches it.
 
 ```js
-httpService.get('/someurl');
+// this
+matchWithParam('query')});
+// will match
+http.get('/some-endpoint',{params:new HttpParams().append('query','value')});
+
+// and this
+matchWithParam('country','canada')});
+// will match
+http.get('/some-endpoint',{params:new HttpParams().append('country','canada')});
 ```
 
-`matchWithParam(name: string, val?: string)` - matches any request where a param exists with the provided name and, if the optional `val` is provided, the param matches it.
-
-e.g. 
 
 And finally, the ultimate combinator helpers to make everything super-readable:
 
-`matchAll(...matchers: Matcher[])`:
+-  ##### `matchAll(...matchers: Matcher[])`:
 
-e.g. 
 ```js
+// this
 matchAll(
   matchWithParam('param1'),
   matchWithParam('param2', 'val2'),
   matchWithMethod('GET')
 )  
-```
-
-will match the following:
-
-```js
+// will match
   const params = new HttpParams().append('param1','any').append('param2','val2');
   httpService.get('/someurl',{params});
 ```
 
-`matchAny(...matchers: Matcher[])`
+-  ##### `matchAny(...matchers: Matcher[])`
 
-e.g. 
 ```js
+// this
 matchAny(
   matchWithParam('param3'),
   matchWithMethod('GET'),
   matchWithHeader('Authorization','Bearer 12345')
 )
+
+// will match any of these
+httpService.get('/someurl');
+httpService.get('/someOtherUrl',{params:new HttpParams().append('param3','val3')});
+httpService.post(
+  '/a-post',
+  {
+    params:new HttpParams().append('param','val3'),
+    headers:{'Authorization':'Bearer 12345'}
+  }
+);
 ```
 
-will match any of the following:
+Finally, this is how you can use the matchers to help you:
 
 ```js
-  httpService.get('/someurl');
-  httpService.get('/someOtherUrl',{params:new HttpParams().append('param3','val3')});
-  httpService.post(
-    '/a-post',
-    {
-      params:new HttpParams().append('param','val3'),
-      headers:{'Authorization':'Bearer 12345'}
-    }
-  );
+  this.ngrxRequestsService.register(matchWithUrl('/my-api'));
 ```
 
-Of course, you can always provide your own custom matcher.
+If you've got a more specific use case, you can always provide your own custom matcher:
+
+```js
+   this.ngrxRequestsService.register((req: HttpRequest<any>) => {
+     if(...) {
+       return true;
+     }
+     return false
+   });
+```
+
+
+### Actions
+
+`ngrx-requests` was inspired by (this great article)[https://medium.com/@m3po22/stop-using-ngrx-effects-for-that-a6ccfe186399] about why (and how) you can stop fetching data inside your ngrx effects. But that doesn't mean you should stop doing everything inside your effects. In fact, you're encouraged to use your effects to "listen" for NGRX_REQUESTS actions and map your fetched data into the appropriate part of your store using `NgrxRequestAction.SUCCESS`
+
+If you aren't using a `transform`, then each `NgrxRequestSuccess` action will have a `meta` property of the `HttpResponse`:
+
+```js
+  @Effect() myEffect$ = this.actions$
+    .pipe(
+      ofType(NgrxRequestAction.SUCCESS),
+      filter((action: NgrxRequestSuccess) => action.id === service.ngrxRequestId),
+      map(({meta:HttpResponse<any>}) => new YourAction(meta.body))
+    ); 
+``` 

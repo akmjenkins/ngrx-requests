@@ -22,7 +22,7 @@ export class MyService implements OnDestroy {
       status$: this.status$,
       meta$: this.meta$,
       dispose: this.dispose
-    } = this.requests.register({matcher: matchWithUrl(MyService.PATH)}));
+    } = this.requests.register(matchWithUrl(MyService.PATH)));
   }
 
   makeRequest(v: string) {

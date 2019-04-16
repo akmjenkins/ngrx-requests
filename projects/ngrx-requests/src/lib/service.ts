@@ -43,14 +43,14 @@ export class NgrxRequestService {
   private matchers: Map<string, NgrxRequestMatcher> = new Map();
   constructor(private store: Store<any>) {}
 
-  register(matcher: {matcher: Matcher, transform?: Transformer}): NgrxRequestData {
+  register(matcher: Matcher, transform?: Transformer): NgrxRequestData {
     const id = this.matchers.size.toString();
     this.matchers.set(
       id,
       {
         id,
-        matcher: matcher.matcher,
-        transform: matcher.transform || DEFAULT_TRANSFORM
+        matcher,
+        transform: transform || DEFAULT_TRANSFORM
       }
     );
 

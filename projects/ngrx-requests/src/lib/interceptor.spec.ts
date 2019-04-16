@@ -74,7 +74,7 @@ describe('Request Interceptor', () => {
     const path = 'my path';
     const matcher = makeMatcher(makeHttpRequestMatcher(makeHttpRequest(path)));
     const spy = jest.spyOn(requestService, 'interceptor');
-    requestService.register(matcher);
+    requestService.register(matcher.matcher, matcher.transform);
     mockHttpService.get(path).subscribe(() => {});
     httpMock.expectOne(path);
     expect(spy).toHaveBeenCalled();
@@ -94,7 +94,7 @@ describe('Request Interceptor', () => {
     let id: string;
 
     beforeEach(() => {
-      const reg = requestService.register(matcher);
+      const reg = requestService.register(matcher.matcher, matcher.transform);
       dispose = reg.dispose;
       id = reg.id;
     });
@@ -164,7 +164,7 @@ describe('Request Interceptor', () => {
 
       beforeEach(() => {
         // register the matcher
-        const reg = requestService.register(transformMatcher);
+        const reg = requestService.register(transformMatcher.matcher, transformMatcher.transform);
         _dispose = reg.dispose;
         _id = reg.id;
 
