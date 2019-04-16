@@ -349,6 +349,8 @@ And finally, the ultimate combinator helpers to make everything super-readable:
 
 -  ##### `matchAll(...matchers: Matcher[])`:
 
+Creates a matcher that returns true when all matchers passed in matches.
+
 ```js
 // this
 matchAll(
@@ -362,6 +364,8 @@ matchAll(
 ```
 
 -  ##### `matchAny(...matchers: Matcher[])`
+
+Creates a matcher that returns true when any matcher passed in matches.
 
 ```js
 // this
