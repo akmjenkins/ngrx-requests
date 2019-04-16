@@ -1,15 +1,15 @@
 [![NPM Version](https://img.shields.io/npm/v/ngrx-requests.svg?branch=master)](https://www.npmjs.com/package/ngrx-requests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![install size](https://packagephobia.now.sh/badge?p=ngrx-requests/dist/ngrx-requests&ngrx-requestsCB=10)](https://packagephobia.now.sh/result?p=ngrx-requests)
+[![install size](https://badgen.net/packagephobia/install/ngrx-requests?CB=2.0.1)](https://packagephobia.now.sh/result?p=ngrx-requests)
 [![codecov](https://codecov.io/gh/akmjenkins/ngrx-requests/branch/master/graph/badge.svg)](https://codecov.io/gh/akmjenkins/ngrx-requests)
 [![Build Status](https://travis-ci.org/akmjenkins/ngrx-requests.svg?branch=master)](https://travis-ci.org/akmjenkins/ngrx-requests)
 
 
 `ngrx-requests` is a super simplified, user-friendly version of [ngrx-query](https://github.com/isaacplmann/ngrx-query) - the angular/ngrx version of [redux-query](https://github.com/amplitude/redux-query)
 
-`ngrx-requests` primary goal is to unopinionatedly destroy all the boilerplate that surrounds network-related redux state, namely the success, fail, error and data state entries, actions and reducer-related code.
+`ngrx-requests` primary goal is to **unopinionatedly** destroy all the boilerplate that surrounds network-related redux state, namely the success, fail, error and data state entries, actions and reducer-related code.
 
-By `unopinionated`, we mean users should be able to adopt `ngrx-requests` pattern into their app a little at a time in a very user-friendly manner.
+By **unopinionated**, we mean users should be able to adopt `ngrx-requests` pattern into their app a little at a time in a very user-friendly manner.
 
 ## Stop the Boilerplate
 
@@ -230,9 +230,9 @@ API
 `matcher` - a function that accepts an HttpRequest and returns a boolean
 `transform` - optional - a function that can transform the success or error response from the async request.
 
-If no `transform` is provided, NgrxRequests uses it's default transformer which will update the status to `NGRXRequestStatus.Success` if an `HttpResponse` is received or `NGRXRequestStatus.ERROR` if an `HttpErrorResponse` is received.
+If no `transform` is provided, NgrxRequests uses it's default transformer which will update the status to `NgrxRequestStatus.Success` if an `HttpResponse` is received or `NgrxRequestStatus.ERROR` if an `HttpErrorResponse` is received.
 
-If provided, `NgrxRequests` will dispatch an `NGRXRequestStatus.Success` action with any data that is returned from `transform` of an `NGRXRequestStatus.Error` action if an error is thrown.
+If provided, `NgrxRequests` will dispatch an `NgrxRequestStatus.Success` action with any data that is returned from `transform` of an `NgrxRequestStatus.Error` action if an error is thrown.
 Here's what the default `transform` looks like to give you an idea:
 
 ```js
@@ -271,7 +271,7 @@ The rest of the Observables are simply selectors to the `NGRX_REQUESTS` slice of
 
 `ngrx-requests` helps you out by providing you `HttpRequest` matchers to help get you started:
 
-- ##### `matchWithBody<T>(body:T)`
+- #### `matchWithBody<T>(body:T)`
 matches any request where the body of the request matches the provided body with equality i.e. `===`.
 
 ```js
@@ -281,7 +281,7 @@ matchWithBody<string>('mybody')
 http.post('/some-endpoint','mybody');
 ```
  
--  ##### `matchWithBodyMatcher<T>(fn: (body: T) => boolean))` 
+-  #### `matchWithBodyMatcher<T>(fn: (body: T) => boolean))` 
 matches any request where the provided function that accepts the HttpRequest body returns true.
 
 ```js
@@ -292,7 +292,7 @@ http.post('/some-endpoint',{params:{key:'value'}});
 ```
  
 
--  ##### `matchWithHeader(name: string, val?: string)`
+##### `matchWithHeader(name: string, val?: string)`
 matches any request where a header exists with the provided name and, if the optional `val` is provided, the header matches it.
 
 ```js
@@ -307,7 +307,7 @@ matchWithHeader('Authorization','Bearer 12345')})
 http.post('/some-endpoint','data',{headers:{Authorization:'Bearer 12345'}});
 ```
 
--  ##### `matchWithMethod(method: string)`
+##### `matchWithMethod(method: string)`
 matches any request where the method matches the provided method (case insensitive)
 ```js
 // this
@@ -316,7 +316,7 @@ matchWithMethod('post')
 http.post('/some-endpoint');
 ```
 
--  ##### `matchWithUrl(url: string | RegExp)`
+##### `matchWithUrl(url: string | RegExp)`
 matches any request whose `url` matches the provided string or regular expression
 
 ```js
@@ -329,7 +329,7 @@ httpService.get('/someurl');
 // but not
 ```
 
--  ##### `matchWithParam(name: string, val?: string)`
+##### `matchWithParam(name: string, val?: string)`
 matches any request where a param exists with the provided name and, if the optional `val` is provided, the param matches it.
 
 ```js
@@ -347,7 +347,7 @@ http.get('/some-endpoint',{params:new HttpParams().append('country','canada')});
 
 And finally, the ultimate combinator helpers to make everything super-readable:
 
--  ##### `matchAll(...matchers: Matcher[])`:
+##### `matchAll(...matchers: Matcher[])`:
 
 Creates a matcher that returns true when all matchers passed in matches.
 
@@ -363,7 +363,7 @@ matchAll(
   httpService.get('/someurl',{params});
 ```
 
--  ##### `matchAny(...matchers: Matcher[])`
+##### `matchAny(...matchers: Matcher[])`
 
 Creates a matcher that returns true when any matcher passed in matches.
 
