@@ -275,7 +275,7 @@ The rest of the Observables are simply selectors to the `NGRX_REQUESTS` slice of
 
 `ngrx-requests` helps you out by providing you `HttpRequest` matchers to help get you started:
 
-#### `matchWithBody<T>(body:T)`
+##### `matchWithBody<T>(body:T)`
 matches any request where the body of the request matches the provided body with equality i.e. `===`.
 
 ```js
@@ -285,7 +285,7 @@ matchWithBody<string>('mybody')
 http.post('/some-endpoint','mybody');
 ```
  
--  #### `matchWithBodyMatcher<T>(fn: (body: T) => boolean))` 
+##### `matchWithBodyMatcher<T>(fn: (body: T) => boolean))` 
 matches any request where the provided function that accepts the HttpRequest body returns true.
 
 ```js
