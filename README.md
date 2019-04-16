@@ -327,6 +327,7 @@ matchWithUrl(/som[aeiou]url/)
 // will match
 httpService.get('/someurl');
 // but not
+httpService.get('/somurl');
 ```
 
 ##### `matchWithParam(name: string, val?: string)`
@@ -407,7 +408,7 @@ If you've got a more specific use case, you can always provide your own custom m
 
 ### Actions
 
-`ngrx-requests` was inspired by (this great article)[https://medium.com/@m3po22/stop-using-ngrx-effects-for-that-a6ccfe186399] about why (and how) you can stop fetching data inside your ngrx effects. But that doesn't mean you should stop doing everything inside your effects. In fact, you're encouraged to use your effects to "listen" for NGRX_REQUESTS actions and map your fetched data into the appropriate part of your store using `NgrxRequestAction.SUCCESS`
+`ngrx-requests` was inspired by [this great article](https://medium.com/@m3po22/stop-using-ngrx-effects-for-that-a6ccfe186399) about why (and how) you can stop fetching data inside your ngrx effects. But that doesn't mean you should stop doing everything inside your effects. In fact, you're encouraged to use your effects to "listen" for NGRX_REQUESTS actions and map your fetched data into the appropriate part of your store using `NgrxRequestAction.SUCCESS`
 
 If you aren't using a `transform`, then each `NgrxRequestSuccess` action will have a `meta` property of the `HttpResponse`:
 
