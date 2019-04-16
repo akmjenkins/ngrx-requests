@@ -16,7 +16,7 @@ By `unopinionated`, we mean users should be able to adopt `ngrx-requests` patter
 
 Listening for request status - in progress, error, success - is something that's often encountered across redux apps. Does your store look like this?
 
-```
+```js
 feature: {
   isFetching:true,
   fetchError:{...}
@@ -40,7 +40,7 @@ feature987: {
 
 Maybe your effects look like this?
 
-```
+```js
 Effect 1:
 @Effect() myEffect$ = this.actions$
   pipe(
@@ -79,24 +79,32 @@ All you have to do, is make the request! No more dispatching success/fail action
 
 Example:
 
-```
+```js
 import { matchWithUrl } from 'ngrx-requests';
 
-export class MyService {
-  public status$: Observable<RequestStatus>
-  public request$ = this.http.get(MyService.PATH).pipe(share());  
-  private dispose: () => {};
+@Injectable()
+export class MyService implements OnDestroy {
 
-  private static PATH = 'some-path';
+  private static PATH = 'https://restcountries.eu/rest/v2/name/';
+
+  public status$: Observable<NgrxRequestStatus>;
+  public meta$: Observable<any>;
+  public request$: Observable<any>;
+  private dispose: () => void;
 
   constructor(
-    requests: ngrxRequests,
-    http: HttpService
+    public requests: NgrxRequestService,
+    public http: HttpClient
   ) {
     ({
-      status$:this.status$,
-      dispose:this.dispose
-    } = this.requests.register(matchWithUrl(MyService.PATH)))
+      status$: this.status$,
+      meta$: this.meta$,
+      dispose: this.dispose
+    } = this.requests.register({matcher: matchWithUrl(MyService.PATH)}));
+  }
+
+  makeRequest(v: string) {
+    this.request$ = this.http.get(`${MyService.PATH}${v}`).pipe(share());
   }
 
   ngOnDestroy() {
@@ -106,7 +114,7 @@ export class MyService {
 ```
 
 Your component
-```
+```js
 @Component({
   ...
 })
@@ -122,20 +130,21 @@ export class MyComponent {
 ```
 
 Template:
-```
-<ng-container>
+```html
+<!-- subscribe to the request -->
+<ng-container *ngIf="service.request$ | async"></ng-container>
 
-  <ng-container [ngSwitch]="myService.request$ | async">
-    <p *ngSwitchCase="NGRXSTATUS.IDLE">Not doing anything</p>
-    <p *ngSwitchCase="NGRXSTATUS.WORKING">Loading data...</p>
-    <p *ngSwitchCase="NGRXSTATUS.ERROR">Failed</p>
-    <p *ngSwitchCase="NGRXSTATUS.SUCCESS">Success!</p>
-  </ng-container>
-  <pre>
-    {{(myService.request$ | async).body}}
-  </pre>
-  
+<ng-container [ngSwitch]="service.status$ | async">
+  <p *ngSwitchCase="NGRXSTATUS.IDLE">Not doing anything</p>
+  <p *ngSwitchCase="NGRXSTATUS.WORKING">Loading data...</p>
+  <p *ngSwitchCase="NGRXSTATUS.ERROR">Failed</p>
+  <p *ngSwitchCase="NGRXSTATUS.SUCCESS">Success!</p>
 </ng-container>
+
+<pre *ngIf="[NGRXSTATUS.ERROR,NGRXSTATUS.SUCCESS].includes(service.status$ | async)">
+  <ng-container *ngIf="(service.status$ | async) === NGRXSTATUS.SUCCESS">{{stringify((service.meta$ | async)?.body)}}</ng-container>
+  <ng-container *ngIf="(service.status$ | async) === NGRXSTATUS.ERROR">{{stringify((service.meta$ | async))}}</ng-container>
+</pre>
 ```
 
 ### (slightly more) Advanced:
@@ -143,7 +152,7 @@ Template:
 You might not feel comfortable (I wouldn't blame you) to leave all of your data inside your `NGRX_REQUESTS` slice of state in your store. Use an effect and it now becomes trivial to put your network-retrieved data wherever you want:
 
 Add the request id to your service:
-```
+```js
 export class MyService {
   public ngrxRequestId: string;
   ...
@@ -162,7 +171,7 @@ export class MyService {
 
 Have your effect listen for NGRX_REQUEST.SUCCESS:
 
-```
+```js
 export class MyEffect {
 
   constructor (
@@ -185,7 +194,7 @@ export class MyEffect {
 This should be evident from the examples above. `ngrx-requests` doesn't need you to create reducers, selectors, structure your store in a specific way, or require complex configuration, all you have to do to start using it. 
 
 #### Import it:
-```
+```js
 @NgModule({
   imports:[
     NgrxRequests,
@@ -195,8 +204,9 @@ This should be evident from the examples above. `ngrx-requests` doesn't need you
 ```
 
 #### Start listening in on requests:
-```
-export class MyService {
+```js
+@Injectable()
+export class MyService implments OnDestroy {
   constructor(
     requests: ngrxRequests
   ) {
@@ -225,7 +235,7 @@ If no `transform` is provided, NgrxRequests uses it's default transformer which 
 If provided, `NgrxRequests` will dispatch an `NGRXRequestStatus.Success` action with any data that is returned from `transform` of an `NGRXRequestStatus.Error` action if an error is thrown.
 Here's what the default `transform` looks like to give you an idea:
 
-```
+```js
 const DEFAULT_TRANSFORM = (r: HttpResponse<any>) => {
   if (r instanceof HttpErrorResponse) {
     throw r;
@@ -236,7 +246,7 @@ const DEFAULT_TRANSFORM = (r: HttpResponse<any>) => {
 
 This is what it returns:
 
-```
+```js
 interface RequestData {
   id: string;
   request$: Observable<NgrxRequestStatusObject>;
@@ -283,14 +293,14 @@ e.g. `ngrxRequestsService.register({matcher:matchWithMethod('post'))` - matches 
 
 e.g. These:
 
-```
+```js
 matchWithUrl('someurl'));
 matchWithUrl(/som[aeiou]url/)
 ```
 
 match this:
 
-```
+```js
 httpService.get('/someurl');
 ```
 
@@ -303,7 +313,7 @@ And finally, the ultimate combinator helpers to make everything super-readable:
 `matchAll(...matchers: Matcher[])`:
 
 e.g. 
-```
+```js
 matchAll(
   matchWithParam('param1'),
   matchWithParam('param2', 'val2'),
@@ -313,7 +323,7 @@ matchAll(
 
 will match the following:
 
-```
+```js
   const params = new HttpParams().append('param1','any').append('param2','val2');
   httpService.get('/someurl',{params});
 ```
@@ -321,7 +331,7 @@ will match the following:
 `matchAny(...matchers: Matcher[])`
 
 e.g. 
-```
+```js
 matchAny(
   matchWithParam('param3'),
   matchWithMethod('GET'),
@@ -331,7 +341,7 @@ matchAny(
 
 will match any of the following:
 
-```
+```js
   httpService.get('/someurl');
   httpService.get('/someOtherUrl',{params:new HttpParams().append('param3','val3')});
   httpService.post(

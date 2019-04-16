@@ -7,6 +7,7 @@ import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { NgrxRequestsModule } from 'projects/ngrx-requests';
 import { HttpClientModule } from '@angular/common/http';
+import { MyService } from './app.service';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,7 @@ import { HttpClientModule } from '@angular/common/http';
     StoreDevtoolsModule.instrument(),
     NgrxRequestsModule,
   ],
-  providers: [],
+  providers: [MyService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

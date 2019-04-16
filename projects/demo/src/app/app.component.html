@@ -1,14 +1,17 @@
 Type the name of a country:<br>
 <input type="text" [formControl]="control">
 
-<br>
-<br>
+<!-- subscribe to the request -->
+<ng-container *ngIf="service.request$ | async"></ng-container>
 
-<div>
-  Request Status: {{req.status$ | async}}
-</div>
+<ng-container [ngSwitch]="service.status$ | async">
+  <p *ngSwitchCase="NGRXSTATUS.IDLE">Not doing anything</p>
+  <p *ngSwitchCase="NGRXSTATUS.WORKING">Loading data...</p>
+  <p *ngSwitchCase="NGRXSTATUS.ERROR">Failed</p>
+  <p *ngSwitchCase="NGRXSTATUS.SUCCESS">Success!</p>
+</ng-container>
 
-Response:
-<pre>
-  {{stringify(req.meta$ | async)}}
+<pre *ngIf="[NGRXSTATUS.ERROR,NGRXSTATUS.SUCCESS].includes(service.status$ | async)">
+<ng-container *ngIf="(service.status$ | async) === NGRXSTATUS.SUCCESS">{{stringify((service.meta$ | async)?.body)}}</ng-container>
+<ng-container *ngIf="(service.status$ | async) === NGRXSTATUS.ERROR">{{stringify((service.meta$ | async))}}</ng-container>
 </pre>

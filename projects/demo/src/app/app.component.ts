@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { switchMap, catchError, share } from 'rxjs/operators';
-import { NgrxRequestService, matchWithUrl, NgrxRequestData } from 'projects/ngrx-requests';
+import { catchError, map } from 'rxjs/operators';
+import { NgrxRequestStatus } from 'projects/ngrx-requests';
+import { MyService } from './app.service';
 
 @Component({
   selector: 'app-root',
@@ -12,14 +12,11 @@ import { NgrxRequestService, matchWithUrl, NgrxRequestData } from 'projects/ngrx
 export class AppComponent implements OnInit {
   control = new FormControl('');
   title = 'demo';
-
-  req: NgrxRequestData;
+  public NGRXSTATUS = NgrxRequestStatus;
 
   constructor(
-    private http: HttpClient,
-    private request: NgrxRequestService
+    public service: MyService
   ) {
-    this.req = this.request.register({matcher: matchWithUrl('restcountries')});
   }
 
   ngOnInit() {
@@ -27,11 +24,9 @@ export class AppComponent implements OnInit {
       .control
       .valueChanges
       .pipe(
-        switchMap(v => this.http.get(`https://restcountries.eu/rest/v2/name/${v}`)),
-        catchError((e, caught) => caught),
-        share()
-      )
-      .subscribe(() => {});
+        map((v: string) => this.service.makeRequest(v)),
+        catchError((err, caught) => caught)
+      ).subscribe(() => {});
 
   }
 
