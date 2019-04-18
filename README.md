@@ -40,33 +40,33 @@ feature987: {
 Maybe your effects look like this?
 
 ```js
-Effect 1:
+// Effect 1:
 @Effect() myEffect$ = this.actions$
-  pipe(
+  .pipe(
     ofType(GET_SOME_DATA),
     switchMap(() => this.service.doAsync()),
     map(() => [new feature.SuccessAction()]),
-    catch((err,caught) => caught.pipe.startWith(new feature.FailAction(err)))
+    catch((err,caught) => caught.pipe(startWith(new feature.FailAction(err)))
   )
 
-Effect 2:
+// Effect 2:
 @Effect() myEffect$ = this.actions$
-  pipe(
+  .pipe(
     ofType(GET_SOME_DATA_2),
     switchMap(() => this.service2.doAsync()),
     map(() => [new feature2.SuccessAction()]),
-    catch((err,caught) => caught.pipe.startWith(new feature2.FailAction(err)))
+    catch((err,caught) => caught.pipe(startWith(new feature2.FailAction(err))))
   )
 
 ...
 
-Effect 987:
+// Effect 987:
 @Effect() myEffect$ = this.actions$
-  pipe(
+  .pipe(
     ofType(GET_SOME_DATA_987),
     switchMap(() => this.service987.doAsync()),
     map(() => [new feature987.SuccessAction()]),
-    catch((err,caught) => caught.pipe.startWith(new feature987.FailAction(err)))
+    catch((err,caught) => caught.pipe(startWith(new feature987.FailAction(err))))
   )
 ```
 
@@ -265,7 +265,7 @@ interface RequestData {
 }
 ```
 
-`id` - useful when in allowing you to listen to ngrx-request actions in your effects and dispatch your own actions.
+`id` - allows you to listen to ngrx-request actions in your effects and dispatch your own actions.
 
 `dispose` - useful when you want to stop the (very little overhead) of having ngrx-requests listen to a request. When a service is destroyed, for instance, you'll probably want to call `dispose()` in `ngOnDestroy`.
 
@@ -412,7 +412,7 @@ If you've got a more specific use case, you can always provide your own custom m
 
 ### Actions
 
-`ngrx-requests` was inspired by [this great article](https://medium.com/@m3po22/stop-using-ngrx-effects-for-that-a6ccfe186399) about why (and how) you can stop fetching data inside your ngrx effects. But that doesn't mean you should stop doing everything inside your effects. In fact, you're encouraged to use your effects to "listen" for NGRX_REQUESTS actions and map your fetched data into the appropriate part of your store using `NgrxRequestAction.SUCCESS`
+`ngrx-requests` was inspired by [this great article](https://medium.com/@m3po22/stop-using-ngrx-effects-for-that-a6ccfe186399) about why (and how) you can stop fetching data inside your ngrx effects. But that doesn't mean you should stop doing everything inside your effects. In fact, you're encouraged to use your effects to "listen" for `NgRxRequestAction.SUCCESS` and map your fetched data into the appropriate part of your store
 
 If you aren't using a `transform`, then each `NgrxRequestSuccess` action will have a `meta` property of the `HttpResponse`:
 
